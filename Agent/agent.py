@@ -4,9 +4,9 @@ import random
 from collections import deque
 
 class TradingAgent:
-    def __init__(self, state_size):
+    def __init__(self, state_size, action_size):
         self.state_size = state_size
-        self.action_size = 3
+        self.action_size = action_size
         self.epsilon = 1.0  # Exploration-exploitation tradeoff
         self.epsilon_decay = 0.995
         self.epsilon_min = 0.01
@@ -56,8 +56,7 @@ class TradingAgent:
         rewards = np.array(rewards)
         next_states = np.array(next_states)
         dones = np.array(dones, dtype=float)
-
-        print("State shape:", states.shape)
+        
         # Current Q-values
         q_values = self.q_network.predict(states, verbose=1)
 

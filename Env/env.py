@@ -17,6 +17,7 @@ class StockMarketEnv:
 
     def get_state(self):
         """Returns the current state for the agent."""
+
         start = max(0, self.current_step - self.window_size + 1)
         end = self.current_step + 1
         
@@ -26,6 +27,7 @@ class StockMarketEnv:
 
     def step(self, action):
         """Takes an action and updates the environment."""
+
         current_price = self.data['Close'][self.current_step]
         next_price = self.data['Close'][self.current_step + 1] if self.current_step + 1 < len(self.data) else current_price
         reward = 0
