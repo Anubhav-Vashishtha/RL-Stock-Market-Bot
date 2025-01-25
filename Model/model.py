@@ -1,5 +1,7 @@
 from keras.layers import Dense
 from keras.models import Sequential
+import tensorflow as tf
+from Model.loss import huber_loss
 
 def _build_model(self):
         model = Sequential()
@@ -9,7 +11,7 @@ def _build_model(self):
         model.add(Dense(units=128, activation="relu"))
         model.add(Dense(units=self.action_size))
 
-        model.compile(loss=self.huber_loss, optimizer =\
+        model.compile(loss=huber_loss, optimizer =\
                        tf.keras.optimizers.Adam(learning_rate=self.learning_rate))
 
         

@@ -1,8 +1,7 @@
-from ..Model.loss import huber_loss
-from ..Model.model import _build_model 
 import numpy as np
 import random
 from collections import deque
+from Model.model import _build_model 
 
 class TradingAgent:
     def __init__(self, state_size, action_size):
@@ -20,8 +19,8 @@ class TradingAgent:
         self.model_name = 'model_1'
 
         # Neural network for Q-value approximation
-        self.q_network = self._build_model()
-        self.target_network = self._build_model()
+        self.q_network = _build_model(self)
+        self.target_network = _build_model(self)
         self.target_network.set_weights(self.q_network.get_weights())
     
     def act(self, state):
