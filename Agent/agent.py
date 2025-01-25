@@ -1,4 +1,5 @@
-import tensorflow as tf
+from ..Model.loss import huber_loss
+from ..Model.model import _build_model 
 import numpy as np
 import random
 from collections import deque
@@ -16,29 +17,20 @@ class TradingAgent:
 
         # Replay memory
         self.memory = deque(maxlen=2000)
+        self.model_name = 'model_1'
 
         # Neural network for Q-value approximation
         self.q_network = self._build_model()
         self.target_network = self._build_model()
         self.target_network.set_weights(self.q_network.get_weights())
-
-    def _build_model(self):
-        model = tf.keras.Sequential([
-            tf.keras.layers.Dense(64, input_dim=self.state_size, activation='relu'),
-            tf.keras.layers.Dense(64, activation='relu'),
-            tf.keras.layers.Dense(self.action_size, activation='linear')
-        ])
-        model.compile(optimizer=tf.keras.optimizers.Adam(learning_rate=self.learning_rate),
-                      loss='mse')
-        return model
-
+    
     def act(self, state):
         if np.random.rand() < self.epsilon:
             return random.choice(range(self.action_size))  # Explore
 
         state_tensor = np.expand_dims(state, axis=0)  # Prepare for prediction
         q_values = self.q_network.predict(state_tensor, verbose=1)
-        return np.argmax(q_values[0])  # Exploit
+        return np.argmax(q_values[0])   # Exploit
 
     def store_transition(self, state, action, reward, next_state, done):
         self.memory.append((state, action, reward, next_state, done))
@@ -63,6 +55,7 @@ class TradingAgent:
         # Target Q-values
         next_q_values = self.target_network.predict(next_states, verbose=1)
         targets = q_values.copy()
+        self.update_target_network()
 
         for i in range(self.batch_size):
             target = rewards[i]
@@ -71,11 +64,15 @@ class TradingAgent:
             targets[i, actions[i]] = target
 
         # Train the Q-network
-        self.q_network.fit(states, targets, epochs=1, verbose=1)
+        self.q_network.fit(states, targets, epochs=10, verbose=2)
+
 
         # Decay epsilon
         if self.epsilon > self.epsilon_min:
             self.epsilon *= self.epsilon_decay
+
+        return self.q_network
+
 
     def update_target_network(self):
         self.target_network.set_weights(self.q_network.get_weights())
