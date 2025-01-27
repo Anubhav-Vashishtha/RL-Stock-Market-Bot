@@ -63,7 +63,7 @@ class TradingAgent:
             targets[i, actions[i]] = target
 
         # Train the Q-network
-        self.q_network.fit(states, targets, epochs=10, verbose=2)
+        self.q_network.fit(states, targets, epochs=1, verbose=1)
 
 
         # Decay epsilon
