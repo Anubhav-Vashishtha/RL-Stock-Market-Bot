@@ -18,7 +18,7 @@ def _build_model(self):
 
     if model_files:
         model_numbers = [int(f.split("_")[1].split(".")[0]) for f in model_files]
-        best_model_file = f"model_{max(model_numbers)}.h5"
+        best_model_file = f"model_{max(model_numbers)}.weights.h5"
         best_model_path = os.path.join(weights_dir, best_model_file)
 
         try:
