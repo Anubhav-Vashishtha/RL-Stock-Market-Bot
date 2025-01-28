@@ -4,8 +4,9 @@ from collections import deque
 from Model.model import _build_model 
 
 class TradingAgent:
-    def __init__(self, state_size, action_size , model_path):
+    def __init__(self, state_size, action_size , model_path = None):
         self.state_size = state_size
+        self.initial_step = True
         self.action_size = action_size
         self.model_path = model_path
         self.epsilon = 1.0  # Exploration-exploitation tradeoff
@@ -14,6 +15,7 @@ class TradingAgent:
         self.discount_factor = 0.99
         self.learning_rate = 0.001
         self.batch_size = 64
+        self.brain = []
 
         # Replay memory
         self.memory = deque(maxlen=2000)
@@ -25,7 +27,11 @@ class TradingAgent:
         self.target_network.set_weights(self.q_network.get_weights())
     
     def act(self, state):
-        if np.random.rand() < self.epsilon:
+        if self.initial_step:
+            self.initial_step = False
+            return 1
+        
+        elif np.random.rand() < self.epsilon:
             return random.choice(range(self.action_size))  # Explore
 
         state_tensor = np.expand_dims(state, axis=0)  # Prepare for prediction
