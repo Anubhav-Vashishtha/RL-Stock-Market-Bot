@@ -4,9 +4,10 @@ from collections import deque
 from Model.model import _build_model 
 
 class TradingAgent:
-    def __init__(self, state_size, action_size):
+    def __init__(self, state_size, action_size , model_path):
         self.state_size = state_size
         self.action_size = action_size
+        self.model_path = model_path
         self.epsilon = 1.0  # Exploration-exploitation tradeoff
         self.epsilon_decay = 0.995
         self.epsilon_min = 0.01
@@ -19,8 +20,8 @@ class TradingAgent:
         self.model_name = 'model_1'
 
         # Neural network for Q-value approximation
-        self.q_network = _build_model(self)
-        self.target_network = _build_model(self)
+        self.q_network = _build_model(self , self.model_path)
+        self.target_network = _build_model(self , self.model_path)
         self.target_network.set_weights(self.q_network.get_weights())
     
     def act(self, state):
